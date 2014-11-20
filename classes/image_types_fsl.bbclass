@@ -92,6 +92,13 @@ SDCARD_GENERATION_COMMAND_mx5 = "generate_imx_sdcard"
 SDCARD_GENERATION_COMMAND_mx6 = "generate_imx_sdcard"
 SDCARD_GENERATION_COMMAND_vf60 = "generate_imx_sdcard"
 
+# Compression method to apply to SDCARD after it has been created. Supported
+# compression formats are "gzip", "bzip2" or "xz". The original .sdcard file
+# is kept and a new compressed file is created if one of these compression
+# formats is chosen. If SDCARD_COMPRESSION is set to any other value it is
+# silently ignored.
+#SDCARD_COMPRESSION ?= ""
+
 #
 # Create an image that can by written onto a SD card using dd for use
 # with i.MX SoC family
@@ -312,6 +319,18 @@ IMAGE_CMD_sdcard () {
 	dd if=/dev/zero of=${SDCARD} bs=1 count=0 seek=$(expr 1024 \* ${SDCARD_SIZE})
 
 	${SDCARD_GENERATION_COMMAND}
+		# Optionally apply compression
+	case "${SDCARD_COMPRESSION}" in
+	"gzip")
+		gzip -k9 "${SDCARD}"
+		;;
+	"bzip2")
+		bzip2 -k9 "${SDCARD}"
+		;;
+	"xz")
+		xz -k "${SDCARD}"
+		;;
+	esac
 }
 
 # The sdcard requires the rootfs filesystem to be built before using
