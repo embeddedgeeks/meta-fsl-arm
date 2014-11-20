@@ -319,7 +319,8 @@ IMAGE_CMD_sdcard () {
 	dd if=/dev/zero of=${SDCARD} bs=1 count=0 seek=$(expr 1024 \* ${SDCARD_SIZE})
 
 	${SDCARD_GENERATION_COMMAND}
-		# Optionally apply compression
+	
+	# Optionally apply compression
 	case "${SDCARD_COMPRESSION}" in
 	"gzip")
 		gzip -k9 "${SDCARD}"
